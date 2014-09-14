@@ -1,0 +1,13 @@
+
+leanmapper:
+	entities:
+		user: UserEntity
+
+		newslist:
+			entity: NewsEntity
+			repository: NewsRepository
+			primaryKey: news_id
+
+		articles:
+			entity: App\Model\Article
+			primaryKey: article_id

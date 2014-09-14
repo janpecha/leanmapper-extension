@@ -1,0 +1,9 @@
+
+extensions:
+	foo: Foo\DI\FooExtension
+
+leanmapper:
+	# database connection
+	user: foo
+	password: bar
+	database: foobar

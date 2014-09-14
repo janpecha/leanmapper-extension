@@ -1,0 +1,13 @@
+
+leanmapper:
+	# required
+	username: foo
+	password: bar
+	database: foobar
+
+	# optional
+	connection: OwnConnection
+	host: 127.0.0.1
+	driver: mysql
+	lazy: true
+	profiler: true

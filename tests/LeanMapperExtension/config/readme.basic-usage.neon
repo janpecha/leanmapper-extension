@@ -1,0 +1,6 @@
+
+leanmapper:
+	# database connection
+	user: foo
+	password: bar
+	database: foobar
