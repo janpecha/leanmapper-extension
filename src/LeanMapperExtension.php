@@ -11,13 +11,15 @@
 	class LeanMapperExtension extends \Nette\DI\CompilerExtension
 	{
 		public $defaults = array(
-			# services
+			// services
 			'mapper' => 'JP\LeanMapperExtension\Mapper',
 			'entityFactory' => 'LeanMapper\DefaultEntityFactory',
 			'connection' => 'LeanMapper\Connection',
+
+			// mapper
 			'defaultEntityNamespace' => NULL,
 
-			# connection
+			// connection
 			'host' => 'localhost',
 			'driver' => 'mysqli',
 			'username' => NULL,
@@ -25,7 +27,7 @@
 			'database' => NULL,
 			'lazy' => TRUE,
 
-			# entities
+			// entities
 			'entities' => NULL,
 		);
 
