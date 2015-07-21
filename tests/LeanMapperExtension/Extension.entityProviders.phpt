@@ -44,15 +44,15 @@ namespace {
 		$articleRepository = $container->getByType('Foo\Model\ArticleRepository');
 		Assert::true($articleRepository instanceof Foo\Model\ArticleRepository);
 
-		Assert::exception(function () use ($container) {;
+		Assert::exception(function () use ($container) {
 			$container->getByType('Foo\Model\NewsRepository');
 		}, 'Nette\DI\MissingServiceException');
 
 		$mapper = $container->getByType('LeanMapper\IMapper');
 		Assert::true($mapper instanceof JP\LeanMapperExtension\Mapper);
 		Assert::same('Foo\Model\Article', $mapper->getEntityClass('foo_articles'));
-	Assert::same('foo_articles', $mapper->getTableByRepositoryClass('Foo\Model\ArticleRepository'));
-	Assert::same('foo_articles', $mapper->getTable('Foo\Model\Article'));
-	Assert::same('article_id', $mapper->getPrimaryKey('foo_articles'));
+		Assert::same('foo_articles', $mapper->getTableByRepositoryClass('Foo\Model\ArticleRepository'));
+		Assert::same('foo_articles', $mapper->getTable('Foo\Model\Article'));
+		Assert::same('article_id', $mapper->getPrimaryKey('foo_articles'));
 	});
 }
