@@ -66,7 +66,7 @@
 			return $this;
 		}
 
-		/*
+		/**
 		 * @inheritdoc
 		 */
 		public function getPrimaryKey($table)
@@ -77,7 +77,7 @@
 			return parent::getPrimaryKey($table);
 		}
 
-		/*
+		/**
 		 * @inheritdoc
 		 */
 		public function getTable($entityClass)
@@ -88,7 +88,7 @@
 			return parent::getTable($entityClass);
 		}
 
-		/*
+		/**
 		 * @inheritdoc
 		 */
 		public function getEntityClass($table, Row $row = NULL)
@@ -99,7 +99,7 @@
 			return parent::getEntityClass($table, $row);
 		}
 
-		/*
+		/**
 		 * @inheritdoc
 		 */
 		public function getTableByRepositoryClass($repositoryClass)

@@ -1,3 +1,4 @@
+
 LeanMapper-extension
 ====================
 
@@ -127,4 +128,3 @@ Extension requires PHP 5.3 or later, Nette 2.2 and LeanMapper 2.2.
 
 License: [New BSD License](license.md)
 <br>Author: Jan Pecha, http://janpecha.iunas.cz/
-

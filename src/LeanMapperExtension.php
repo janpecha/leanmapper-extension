@@ -1,6 +1,6 @@
 <?php
 	/**
-	 * @author		Jan Pecha, <janpecha@email.cz>
+	 * @author  Jan Pecha, <janpecha@email.cz>
 	 */
 
 	namespace JP\LeanMapperExtension;
@@ -238,4 +238,3 @@
 			};
 		}
 	}
-
