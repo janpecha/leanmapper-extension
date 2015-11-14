@@ -1,11 +1,13 @@
 <?php
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../../src/Mapper.php';
+require __DIR__ . '/classes.php';
 
 Tester\Environment::setup();
 
 // create temporary directory
 define('TEMP_DIR', __DIR__ . '/../tmp/' . (isset($_SERVER['argv']) ? md5(serialize($_SERVER['argv'])) : getmypid()));
+@mkdir(TEMP_DIR, 0777, TRUE);
 Tester\Helpers::purge(TEMP_DIR);
 
 

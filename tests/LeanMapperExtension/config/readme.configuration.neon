@@ -8,6 +8,6 @@ leanmapper:
 	# optional
 	connection: OwnConnection
 	host: 127.0.0.1
-	driver: mysql
+	driver: fakeMysql
 	lazy: true
 	profiler: true

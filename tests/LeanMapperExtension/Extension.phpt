@@ -13,7 +13,7 @@ test(function () {
 
 	Assert::same(array(
 		'host' => 'localhost',
-		'driver' => 'mysqli',
+		'driver' => 'fakeMysql',
 		'username' => 'foo',
 		'password' => 'bar',
 		'database' => 'foobar',
@@ -39,15 +39,12 @@ test(function () {
 
 	Assert::same(array(
 		'host' => '127.0.0.1',
-		'driver' => 'mysql',
+		'driver' => 'fakeMysql',
 		'username' => 'foo',
 		'password' => 'bar',
 		'database' => 'foobar',
 		'lazy' => TRUE,
 	), $config);
-
-	$profiler = $container->getByType('Dibi\Bridges\Tracy\Panel');
-	Assert::true($profiler instanceof Dibi\Bridges\Tracy\Panel);
 });
 
 

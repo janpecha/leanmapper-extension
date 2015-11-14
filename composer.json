@@ -8,7 +8,8 @@
     },
     "require-dev": {
         "nette/tester": "~1.2",
-        "nette/nette": "~2.2"
+        "nette/bootstrap": "~2.2",
+        "tracy/tracy": "~2.2"
     },
     "license": "BSD-3",
     "autoload": {

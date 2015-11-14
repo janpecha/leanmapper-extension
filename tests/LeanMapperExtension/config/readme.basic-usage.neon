@@ -4,3 +4,5 @@ leanmapper:
 	user: foo
 	password: bar
 	database: foobar
+
+	driver: fakeMysql

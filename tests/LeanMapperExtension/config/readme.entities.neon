@@ -1,5 +1,6 @@
 
 leanmapper:
+	driver: fakeMysql
 	entities:
 		user: UserEntity
 

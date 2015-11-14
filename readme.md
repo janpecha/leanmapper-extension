@@ -2,13 +2,28 @@
 LeanMapper-extension
 ====================
 
-LeanMapper extension for [Nette](http://nette.org) 2.2.
+LeanMapper extension for [Nette](http://nette.org).
+
+
+Installation
+------------
+
+[Download a latest package](https://github.com/janpecha/leanmapper-extension/releases) or use [Composer](http://getcomposer.org/):
+
+```
+composer require janpecha/leanmapper-extension
+```
+
+Extension requires:
+* PHP 5.3 or later
+* Nette 2.2 or later
+* LeanMapper 2.2 or later
 
 
 Usage
 -----
 
-```
+``` yaml
 extensions:
 	leanmapper: JP\LeanMapperExtension\LeanMapperExtension
 
@@ -26,7 +41,7 @@ Configuration
 
 ### Database connection
 
-```
+``` yaml
 leanmapper:
 	# required
 	username: ...
@@ -44,7 +59,7 @@ leanmapper:
 
 ### Entities
 
-```
+``` yaml
 leanmapper:
 	entityFactory: LeanMapper\DefaultEntityFactory
 	entities:
@@ -63,7 +78,7 @@ leanmapper:
 
 ### Mapper
 
-```
+``` yaml
 leanmapper:
 	mapper: JP\LeanMapperExtension\Mapper
 	defaultEntityNamespace: 'Model\Entity'
@@ -110,19 +125,6 @@ $mapper = JP\LeanMapperExtension\Mapper($defaultEntityNamespace = NULL);
 $mapper->register($tableName, $entity = NULL, $repository = NULL, $primaryKey = NULL);
 ?>
 ```
-
-
-Installation
-------------
-
-[Download a latest package](https://github.com/janpecha/leanmapper-extension/releases) or use [Composer](http://getcomposer.org/):
-
-```
-composer require janpecha/leanmapper-extension
-```
-
-Extension requires PHP 5.3 or later, Nette 2.2 and LeanMapper 2.2.
-
 
 ------------------------------
 
