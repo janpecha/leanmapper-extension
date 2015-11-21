@@ -33,6 +33,28 @@ namespace Foo\DI {
 			);
 		}
 	}
+
+
+	class FooBrokenExtension extends CompilerExtension implements IEntityProvider
+	{
+		// from IEntityProvider
+		function getEntityMappings()
+		{
+			return 'broken';
+		}
+	}
+
+
+	class FooBrokenMappingExtension extends CompilerExtension implements IEntityProvider
+	{
+		// from IEntityProvider
+		function getEntityMappings()
+		{
+			return array(
+				'broken',
+			);
+		}
+	}
 }
 
 namespace {
@@ -54,5 +76,19 @@ namespace {
 		Assert::same('foo_articles', $mapper->getTableByRepositoryClass('Foo\Model\ArticleRepository'));
 		Assert::same('foo_articles', $mapper->getTable('Foo\Model\Article'));
 		Assert::same('article_id', $mapper->getPrimaryKey('foo_articles'));
+	});
+
+
+	test(function () {
+		Assert::exception(function () {
+			$container = createContainer('addons.broken');
+		}, 'InvalidArgumentException', 'Mappings must be array or NULL, string given.');
+	});
+
+
+	test(function () {
+		Assert::exception(function () {
+			$container = createContainer('addons.broken-mapping');
+		}, 'InvalidArgumentException', 'Entity mapping must be array or NULL, string given.');
 	});
 }

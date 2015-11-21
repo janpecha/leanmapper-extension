@@ -160,12 +160,12 @@
 					$mappings = $extension->getEntityMappings();
 
 					if (!is_array($mappings) && !is_null($mappings)) {
-						throw new \InvalidArgumentException('Mappings must be array or NULL, '. gettype($mapping) . ' given.');
+						throw new \InvalidArgumentException('Mappings must be array or NULL, '. gettype($mappings) . ' given.');
 					}
 
 					if (is_array($mappings)) {
 						foreach ($mappings as $mapping) {
-							if (!is_array($mappings) && !is_null($mappings)) {
+							if (!is_array($mapping) && !is_null($mapping)) {
 								throw new \InvalidArgumentException('Entity mapping must be array or NULL, '. gettype($mapping) . ' given.');
 							}
 							$this->registerInMapper($mapper, $mapping);

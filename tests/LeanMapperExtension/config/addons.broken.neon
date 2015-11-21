@@ -1,0 +1,11 @@
+
+extensions:
+	foo: Foo\DI\FooBrokenExtension
+
+leanmapper:
+	# database connection
+	user: foo
+	password: bar
+	database: foobar
+
+	driver: fakeMysql
