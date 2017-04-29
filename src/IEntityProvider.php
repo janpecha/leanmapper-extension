@@ -1,5 +1,7 @@
 <?php
+
 	namespace JP\LeanMapperExtension;
+
 
 	interface IEntityProvider
 	{

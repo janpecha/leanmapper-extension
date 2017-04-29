@@ -1,12 +1,11 @@
 <?php
-	/**
-	 * @author  Jan Pecha, <janpecha@email.cz>
-	 */
 
 	namespace JP\LeanMapperExtension;
+
 	use Nette\DI\ServiceDefinition;
 	use Nette\DI\ContainerBuilder;
 	use Nette;
+
 
 	class LeanMapperExtension extends \Nette\DI\CompilerExtension
 	{
