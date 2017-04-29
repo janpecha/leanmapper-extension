@@ -1,8 +1,10 @@
 <?php
+
 	namespace JP\LeanMapperExtension;
 
 	use LeanMapper\Exception\InvalidStateException;
 	use LeanMapper\Row;
+
 
 	class Mapper extends \LeanMapper\DefaultMapper
 	{

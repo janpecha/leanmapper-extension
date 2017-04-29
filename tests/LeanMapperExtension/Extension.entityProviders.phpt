@@ -1,15 +1,23 @@
 <?php
-namespace {
+
+namespace
+{
 	require __DIR__ . '/bootstrap.php';
 }
 
-namespace Foo\Model {
+
+namespace Foo\Model
+{
 	class ArticleRepository extends \LeanMapper\Repository {}
 }
 
-namespace Foo\DI {
+
+namespace Foo\DI
+{
+
 	use Nette\DI\CompilerExtension;
 	use JP\LeanMapperExtension\IEntityProvider;
+
 
 	class FooExtension extends CompilerExtension implements IEntityProvider
 	{
@@ -57,8 +65,11 @@ namespace Foo\DI {
 	}
 }
 
-namespace {
+namespace
+{
+
 	use Tester\Assert;
+
 
 	test(function () {
 		$container = createContainer('readme.addons');

@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../../src/Mapper.php';
 require __DIR__ . '/classes.php';
