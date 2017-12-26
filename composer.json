@@ -1,24 +1,24 @@
 {
-    "name": "janpecha/leanmapper-extension",
-    "description": "LeanMapper extension for Nette DI",
-    "require": {
-        "php": ">=5.3.0",
-        "nette/di": "^2.2",
-        "tharos/leanmapper": "^2.2 || ^3.0"
-    },
-    "require-dev": {
-        "nette/tester": "~1.2",
-        "nette/bootstrap": "^2.2",
-        "tracy/tracy": "^2.2"
-    },
-    "license": "BSD-3",
-    "autoload": {
-        "classmap": ["src/"]
-    },
-    "authors": [
-        {
-            "name": "Jan Pecha",
-            "email": "janpecha@email.cz"
-        }
-    ]
+	"name": "janpecha/leanmapper-extension",
+	"description": "LeanMapper extension for Nette DI",
+	"require": {
+		"php": ">=5.3.0",
+		"nette/di": "^2.2",
+		"tharos/leanmapper": "^2.2 || ^3.0"
+	},
+	"require-dev": {
+		"nette/tester": "~1.2",
+		"nette/bootstrap": "^2.2",
+		"tracy/tracy": "^2.2"
+	},
+	"license": "BSD-3",
+	"autoload": {
+		"classmap": ["src/"]
+	},
+	"authors": [
+		{
+			"name": "Jan Pecha",
+			"email": "janpecha@email.cz"
+		}
+	]
 }
