@@ -4,7 +4,9 @@ LeanMapper-extension
 
 [![Build Status](https://travis-ci.org/janpecha/leanmapper-extension.svg?branch=v0.9.2)](https://travis-ci.org/janpecha/leanmapper-extension)
 
-LeanMapper extension for [Nette](http://nette.org).
+[Lean Mapper](http://leanmapper.com/) extension for [Nette](https://nette.org).
+
+<a href="https://www.patreon.com/bePatron?u=9680759"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patron!" height="35"></a>
 
 
 Installation
