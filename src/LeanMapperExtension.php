@@ -11,7 +11,7 @@
 	{
 		public $defaults = array(
 			// services
-			'mapper' => 'JP\LeanMapperExtension\Mapper',
+			'mapper' => 'JP\LeanMapperExtension\Mapper', // string|FALSE|NULL
 			'entityFactory' => 'LeanMapper\DefaultEntityFactory',
 			'connection' => 'LeanMapper\Connection',
 
@@ -51,7 +51,7 @@
 
 			// Services
 			$connection = $this->configConnection($builder, $config);
-			$mapper = $this->configMapper($builder, $config);
+			$this->configMapper($builder, $config);
 
 			$builder->addDefinition($this->prefix('entityFactory'))
 				->setClass($config['entityFactory']);
@@ -92,10 +92,16 @@
 
 		/**
 		 * Adds mapper service into container
-		 * @return ServiceDefinition
+		 * @return ServiceDefinition|NULL
 		 */
 		protected function configMapper(ContainerBuilder $builder, array $config)
 		{
+			$mapperClass = $config['mapper'];
+
+			if ($mapperClass === FALSE || $mapperClass === NULL) {
+				return NULL;
+			}
+
 			if ($config['defaultEntityNamespace'] !== NULL && !is_string($config['defaultEntityNamespace'])) {
 				throw new \RuntimeException('DefaultEntityNamespace must be NULL or string, ' . gettype($config['defaultEntityNamespace']) . ' given');
 			}

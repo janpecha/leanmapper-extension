@@ -76,3 +76,12 @@ test(function () {
 	Assert::same('newslist', $mapper->getTable('NewsEntity'));
 	Assert::same('news_id', $mapper->getPrimaryKey('newslist'));
 });
+
+
+// Disable
+test(function () {
+	$container = createContainer('disable-mapper');
+	Assert::exception(function () use ($container) {;
+		$container->getByType('LeanMapper\IMapper');
+	}, 'Nette\DI\MissingServiceException');
+});
