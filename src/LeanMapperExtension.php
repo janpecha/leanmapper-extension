@@ -25,6 +25,7 @@
 			'password' => NULL,
 			'database' => NULL,
 			'lazy' => TRUE,
+			'charset' => NULL,
 
 			// entities
 			'entities' => NULL,
@@ -85,6 +86,7 @@
 						'password' => $config['password'],
 						'database' => $config['database'],
 						'lazy' => (bool) $config['lazy'],
+						'charset' => $config['charset'],
 					),
 				));
 		}
