@@ -34,7 +34,7 @@ Extension requires:
 Usage
 -----
 
-``` yaml
+``` neon
 extensions:
 	leanmapper: JP\LeanMapperExtension\LeanMapperExtension
 
@@ -52,7 +52,7 @@ Configuration
 
 ### Database connection
 
-``` yaml
+``` neon
 leanmapper:
 	# required
 	username: ...
@@ -71,7 +71,7 @@ leanmapper:
 
 ### Entities
 
-``` yaml
+``` neon
 leanmapper:
 	entityFactory: LeanMapper\DefaultEntityFactory
 	entities:
@@ -90,7 +90,7 @@ leanmapper:
 
 ### Mapper
 
-``` yaml
+``` neon
 leanmapper:
 	mapper: JP\LeanMapperExtension\Mapper
 	defaultEntityNamespace: 'Model\Entity'
@@ -101,7 +101,6 @@ Support for addons
 ------------------
 
 ``` php
-<?php
 use Nette\DI\CompilerExtension;
 use JP\LeanMapperExtension\IEntityProvider;
 
@@ -122,7 +121,6 @@ class FooExtension extends CompilerExtension implements IEntityProvider
 		);
 	}
 }
-?>
 ```
 
 
@@ -130,12 +128,10 @@ Mapper (for experts)
 ------
 
 ``` php
-<?php
 $mapper = JP\LeanMapperExtension\Mapper($defaultEntityNamespace = NULL);
 
 // register entity
 $mapper->register($tableName, $entity = NULL, $repository = NULL, $primaryKey = NULL);
-?>
 ```
 
 ------------------------------
