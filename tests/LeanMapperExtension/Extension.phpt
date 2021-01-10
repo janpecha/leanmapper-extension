@@ -57,6 +57,12 @@ class NewsRepository extends LeanMapper\Repository {}
 test(function () {
 	$container = createContainer('readme.entities');
 
+	$connection = $container->getService('leanmapper.connection');
+	Assert::true($connection instanceof \LeanMapper\Connection);
+
+	$entityFactory = $container->getService('leanmapper.entityFactory');
+	Assert::true($entityFactory instanceof \LeanMapper\DefaultEntityFactory);
+
 	$newsRepository = $container->getByType(NewsRepository::class);
 	Assert::true($newsRepository instanceof NewsRepository);
 
@@ -82,8 +88,17 @@ test(function () {
 
 // Disable
 test(function () {
-	$container = createContainer('disable-mapper');
+	$container = createContainer('disable-services');
+
+	Assert::exception(function () use ($container) {;
+		$container->getByType(LeanMapper\Connection::class);
+	}, Nette\DI\MissingServiceException::class);
+
 	Assert::exception(function () use ($container) {;
 		$container->getByType(LeanMapper\IMapper::class);
+	}, Nette\DI\MissingServiceException::class);
+
+	Assert::exception(function () use ($container) {;
+		$container->getByType(LeanMapper\IEntityFactory::class);
 	}, Nette\DI\MissingServiceException::class);
 });

@@ -53,12 +53,10 @@
 			// Services
 			$connection = $this->configConnection($builder, $config);
 			$this->configMapper($builder, $config);
-
-			$builder->addDefinition($this->prefix('entityFactory'))
-				->setClass($config['entityFactory']);
+			$this->configEntityFactory($builder, $config);
 
 			// profiler
-			if ($useProfiler) {
+			if ($connection && $useProfiler) {
 				$panel = $builder->addDefinition($this->prefix('panel'))
 					->setClass(\Dibi\Bridges\Tracy\Panel::class);
 
@@ -73,8 +71,14 @@
 		 */
 		protected function configConnection(ContainerBuilder $builder, array $config)
 		{
-			if (!isset($config['connection']) || !is_string($config['connection'])) {
-				throw new \RuntimeException('Connection class definition is missing, or not (string).');
+			$connectionClass = $config['connection'];
+
+			if ($connectionClass === FALSE || $connectionClass === NULL) {
+				return NULL;
+			}
+
+			if (!is_string($config['connection'])) {
+				throw new \RuntimeException('Connection class definition must be string.');
 			}
 
 			return $builder->addDefinition($this->prefix('connection'))
@@ -89,6 +93,27 @@
 						'charset' => $config['charset'],
 					],
 				]);
+		}
+
+
+		/**
+		 * Adds connection service into container
+		 * @return ServiceDefinition
+		 */
+		protected function configEntityFactory(ContainerBuilder $builder, array $config)
+		{
+			$entityFactoryClass = $config['entityFactory'];
+
+			if ($entityFactoryClass === FALSE || $entityFactoryClass === NULL) {
+				return NULL;
+			}
+
+			if (!is_string($config['entityFactory'])) {
+				throw new \RuntimeException('EntityFactory class definition must be string.');
+			}
+
+			return $builder->addDefinition($this->prefix('entityFactory'))
+				->setClass($config['entityFactory']);
 		}
 
 

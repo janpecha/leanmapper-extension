@@ -1,0 +1,4 @@
+leanmapper:
+	mapper: no
+	connection: no
+	entityFactory: no
