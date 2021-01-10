@@ -19,6 +19,7 @@ test(function () {
 		'password' => 'bar',
 		'database' => 'foobar',
 		'lazy' => TRUE,
+		'charset' => NULL,
 	], $config);
 
 	Assert::exception(function () use ($container) {;
@@ -45,6 +46,7 @@ test(function () {
 		'password' => 'bar',
 		'database' => 'foobar',
 		'lazy' => TRUE,
+		'charset' => NULL,
 	], $config);
 });
 
