@@ -2,7 +2,7 @@
 LeanMapper-extension
 ====================
 
-[![Build Status](https://travis-ci.org/janpecha/leanmapper-extension.svg?branch=master)](https://travis-ci.org/janpecha/leanmapper-extension)
+[![Tests Status](https://github.com/janpecha/leanmapper-extension/workflows/Tests/badge.svg)](https://github.com/janpecha/leanmapper-extension/actions)
 
 [Lean Mapper](http://leanmapper.com/) extension for [Nette](https://nette.org).
 
