@@ -12,14 +12,14 @@ test(function () {
 	$config = $connection->getConfig();
 	unset($config['name'], $config['result']);
 
-	Assert::same(array(
+	Assert::same([
 		'host' => 'localhost',
 		'driver' => 'fakeMysql',
 		'username' => 'foo',
 		'password' => 'bar',
 		'database' => 'foobar',
 		'lazy' => TRUE,
-	), $config);
+	], $config);
 
 	Assert::exception(function () use ($container) {;
 		$container->getByType('Dibi\Bridges\Tracy\Panel');
@@ -38,14 +38,14 @@ test(function () {
 	$config = $connection->getConfig();
 	unset($config['name'], $config['result']);
 
-	Assert::same(array(
+	Assert::same([
 		'host' => '127.0.0.1',
 		'driver' => 'fakeMysql',
 		'username' => 'foo',
 		'password' => 'bar',
 		'database' => 'foobar',
 		'lazy' => TRUE,
-	), $config);
+	], $config);
 });
 
 

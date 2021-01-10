@@ -24,21 +24,21 @@ namespace Foo\DI
 		// from IEntityProvider
 		function getEntityMappings()
 		{
-			return array(
-				array(
+			return [
+				[
 					'table' => 'foo_articles',
 					'primaryKey' => 'article_id',
 					'entity' => 'Foo\Model\Article',
 					'repository' => 'Foo\Model\ArticleRepository',
-				),
-				array(
+				],
+				[
 					'table' => 'news',
 					'primaryKey' => 'id_news',
 					'entity' => 'Foo\Model\News',
 					'repository' => 'Foo\Model\NewsRepository',
 					'registerRepository' => FALSE,
-				),
-			);
+				],
+			];
 		}
 	}
 
@@ -58,9 +58,9 @@ namespace Foo\DI
 		// from IEntityProvider
 		function getEntityMappings()
 		{
-			return array(
+			return [
 				'broken',
-			);
+			];
 		}
 	}
 }

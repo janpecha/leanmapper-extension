@@ -51,10 +51,10 @@
 				throw new InvalidStateException("Repository $repositoryClass is already registered for table '{$this->repositories[$repositoryClass]}'");
 			}
 
-			$this->tables[$tableName] = array(
+			$this->tables[$tableName] = [
 				self::K_ENTITY_CLASS => $entityClass,
 				self::K_PRIMARY_KEY => $primaryKey,
-			);
+			];
 
 			if (is_string($entityClass)) {
 				$this->entities[$entityClass] = $tableName;

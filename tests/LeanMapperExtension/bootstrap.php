@@ -27,7 +27,7 @@ function createContainer($configFile)
 {
 	$config = new Nette\Configurator();
 	$config->setTempDirectory(TEMP_DIR);
-	$config->addParameters(array('container' => array('class' => 'SystemContainer_' . md5($configFile))));
+	$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5($configFile)]]);
 	$config->addConfig(__DIR__ . '/config/' . $configFile . '.neon');
 	JP\LeanMapperExtension\LeanMapperExtension::register($config);
 

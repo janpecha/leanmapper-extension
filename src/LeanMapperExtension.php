@@ -9,7 +9,7 @@
 
 	class LeanMapperExtension extends \Nette\DI\CompilerExtension
 	{
-		public $defaults = array(
+		public $defaults = [
 			// services
 			'mapper' => 'JP\LeanMapperExtension\Mapper', // string|FALSE|NULL
 			'entityFactory' => 'LeanMapper\DefaultEntityFactory',
@@ -29,7 +29,7 @@
 
 			// entities
 			'entities' => NULL,
-		);
+		];
 
 
 		public function loadConfiguration()
@@ -62,7 +62,7 @@
 				$panel = $builder->addDefinition($this->prefix('panel'))
 					->setClass('Dibi\Bridges\Tracy\Panel');
 
-				$connection->addSetup(array($panel, 'register'), array($connection));
+				$connection->addSetup([$panel, 'register'], [$connection]);
 			}
 		}
 
@@ -78,8 +78,8 @@
 			}
 
 			return $builder->addDefinition($this->prefix('connection'))
-				->setClass($config['connection'], array(
-					array(
+				->setClass($config['connection'], [
+					[
 						'host' => $config['host'],
 						'driver' => $config['driver'],
 						'username' => $config['username'],
@@ -87,8 +87,8 @@
 						'database' => $config['database'],
 						'lazy' => (bool) $config['lazy'],
 						'charset' => $config['charset'],
-					),
-				));
+					],
+				]);
 		}
 
 
@@ -109,7 +109,7 @@
 			}
 
 			$mapper = $builder->addDefinition($this->prefix('mapper'))
-				->setClass($config['mapper'], array($config['defaultEntityNamespace']));
+				->setClass($config['mapper'], [$config['defaultEntityNamespace']]);
 
 			$this->processEntityProviders($mapper, $config);
 			$this->processUserEntities($mapper, $config);
@@ -137,9 +137,9 @@
 					}
 
 					if (is_string($mapping)) { // entity class
-						$mapping = array(
+						$mapping = [
 							'entity' => $mapping,
-						);
+						];
 					}
 
 					$mapping['table'] = $tableName;
@@ -229,7 +229,7 @@
 				throw new \InvalidArgumentException('Primary key must be string or NULL, ' . gettype($primaryKey) . ' given');
 			}
 
-			$mapper->addSetup('register', array($mapping['table'], $mapping['entity'], $repositoryClass, $primaryKey));
+			$mapper->addSetup('register', [$mapping['table'], $mapping['entity'], $repositoryClass, $primaryKey]);
 		}
 
 
