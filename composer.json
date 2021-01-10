@@ -2,7 +2,7 @@
 	"name": "janpecha/leanmapper-extension",
 	"description": "LeanMapper extension for Nette DI",
 	"require": {
-		"php": ">=5.3.0",
+		"php": ">=5.6.0",
 		"nette/di": "^2.2",
 		"tharos/leanmapper": "^2.2 || ^3.0"
 	},
