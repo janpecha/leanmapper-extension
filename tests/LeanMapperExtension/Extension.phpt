@@ -82,8 +82,17 @@ test(function () {
 
 // Disable
 test(function () {
-	$container = createContainer('disable-mapper');
+	$container = createContainer('disable-services');
+
+	Assert::exception(function () use ($container) {;
+		$container->getByType(LeanMapper\Connection::class);
+	}, Nette\DI\MissingServiceException::class);
+
 	Assert::exception(function () use ($container) {;
 		$container->getByType(LeanMapper\IMapper::class);
+	}, Nette\DI\MissingServiceException::class);
+
+	Assert::exception(function () use ($container) {;
+		$container->getByType(LeanMapper\IEntityFactory::class);
 	}, Nette\DI\MissingServiceException::class);
 });
