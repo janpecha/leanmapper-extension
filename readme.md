@@ -113,8 +113,8 @@ class FooExtension extends CompilerExtension implements IEntityProvider
 			array(
 				'table' => 'foo_articles',
 				'primaryKey' => 'id',
-				'entity' => 'Foo\Model\Article',
-				'repository' => 'Foo\Model\ArticleRepository', # repository is auto-registred in DI container, see option 'registerRepository'
+				'entity' => Foo\Model\Article::class,
+				'repository' => Foo\Model\ArticleRepository::class, # repository is auto-registred in DI container, see option 'registerRepository'
 				'registerRepository' => TRUE, // optional
 			),
 			// ...
