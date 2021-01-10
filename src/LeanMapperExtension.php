@@ -28,7 +28,7 @@
 			'charset' => NULL,
 
 			// entities
-			'entities' => NULL,
+			'mapping' => NULL,
 		];
 
 
@@ -112,26 +112,26 @@
 				->setClass($config['mapper'], [$config['defaultEntityNamespace']]);
 
 			$this->processEntityProviders($mapper, $config);
-			$this->processUserEntities($mapper, $config);
+			$this->processUserMapping($mapper, $config);
 
 			return $mapper;
 		}
 
 
 		/**
-		 * Processes user entities definitions + registers repositories in container
+		 * Processes user entities mapping + registers repositories in container
 		 * @return void
 		 */
-		protected function processUserEntities(ServiceDefinition $mapper, array $config)
+		protected function processUserMapping(ServiceDefinition $mapper, array $config)
 		{
 			$builder = $this->getContainerBuilder();
 
-			if (isset($config['entities'])) {
-				if (!is_array($config['entities'])) {
-					throw new \RuntimeException('List of entities must be array, ' . gettype($config['entities']) . ' given');
+			if (isset($config['mapping'])) {
+				if (!is_array($config['mapping'])) {
+					throw new \RuntimeException('Mapping must be array, ' . gettype($config['mapping']) . ' given');
 				}
 
-				foreach ($config['entities'] as $tableName => $mapping) {
+				foreach ($config['mapping'] as $tableName => $mapping) {
 					if (isset($mapping['repository']) && !is_string($mapping['repository'])) {
 						throw new \RuntimeException('Repository class must be string or NULL, ' . gettype($mapping['primaryKey']) . ' given');
 					}

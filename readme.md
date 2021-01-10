@@ -74,7 +74,7 @@ leanmapper:
 ``` neon
 leanmapper:
 	entityFactory: LeanMapper\DefaultEntityFactory
-	entities:
+	mapping:
 		table: EntityClass
 
 		table:
