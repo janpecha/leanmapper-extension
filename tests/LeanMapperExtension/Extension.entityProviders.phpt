@@ -28,14 +28,14 @@ namespace Foo\DI
 				[
 					'table' => 'foo_articles',
 					'primaryKey' => 'article_id',
-					'entity' => 'Foo\Model\Article',
-					'repository' => 'Foo\Model\ArticleRepository',
+					'entity' => \Foo\Model\Article::class,
+					'repository' => \Foo\Model\ArticleRepository::class,
 				],
 				[
 					'table' => 'news',
 					'primaryKey' => 'id_news',
-					'entity' => 'Foo\Model\News',
-					'repository' => 'Foo\Model\NewsRepository',
+					'entity' => \Foo\Model\News::class,
+					'repository' => \Foo\Model\NewsRepository::class,
 					'registerRepository' => FALSE,
 				],
 			];
@@ -74,18 +74,18 @@ namespace
 	test(function () {
 		$container = createContainer('readme.addons');
 
-		$articleRepository = $container->getByType('Foo\Model\ArticleRepository');
+		$articleRepository = $container->getByType(Foo\Model\ArticleRepository::class);
 		Assert::true($articleRepository instanceof Foo\Model\ArticleRepository);
 
 		Assert::exception(function () use ($container) {
-			$container->getByType('Foo\Model\NewsRepository');
-		}, 'Nette\DI\MissingServiceException');
+			$container->getByType(Foo\Model\NewsRepository::class);
+		}, Nette\DI\MissingServiceException::class);
 
-		$mapper = $container->getByType('LeanMapper\IMapper');
+		$mapper = $container->getByType(LeanMapper\IMapper::class);
 		Assert::true($mapper instanceof JP\LeanMapperExtension\Mapper);
-		Assert::same('Foo\Model\Article', $mapper->getEntityClass('foo_articles'));
-		Assert::same('foo_articles', $mapper->getTableByRepositoryClass('Foo\Model\ArticleRepository'));
-		Assert::same('foo_articles', $mapper->getTable('Foo\Model\Article'));
+		Assert::same(Foo\Model\Article::class, $mapper->getEntityClass('foo_articles'));
+		Assert::same('foo_articles', $mapper->getTableByRepositoryClass(Foo\Model\ArticleRepository::class));
+		Assert::same('foo_articles', $mapper->getTable(Foo\Model\Article::class));
 		Assert::same('article_id', $mapper->getPrimaryKey('foo_articles'));
 	});
 
@@ -93,13 +93,13 @@ namespace
 	test(function () {
 		Assert::exception(function () {
 			$container = createContainer('addons.broken');
-		}, 'InvalidArgumentException', 'Mappings must be array or NULL, string given.');
+		}, InvalidArgumentException::class, 'Mappings must be array or NULL, string given.');
 	});
 
 
 	test(function () {
 		Assert::exception(function () {
 			$container = createContainer('addons.broken-mapping');
-		}, 'InvalidArgumentException', 'Entity mapping must be array or NULL, string given.');
+		}, InvalidArgumentException::class, 'Entity mapping must be array or NULL, string given.');
 	});
 }

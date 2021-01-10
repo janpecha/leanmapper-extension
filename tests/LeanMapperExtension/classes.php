@@ -1,7 +1,7 @@
 <?php
 
 namespace {
-	if (class_exists('DibiMySqlDriver')) {
+	if (class_exists(DibiMySqlDriver::class)) {
 		class DibiFakeMySqlDriver extends DibiMySqlDriver
 		{
 			public function __construct()
@@ -13,7 +13,7 @@ namespace {
 
 
 namespace Dibi\Drivers {
-	if (class_exists('Dibi\Drivers\MySqlDriver')) {
+	if (class_exists(MySqlDriver::class)) {
 		class FakeMySqlDriver extends MySqlDriver
 		{
 			public function __construct()

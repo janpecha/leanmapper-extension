@@ -11,9 +11,9 @@
 	{
 		public $defaults = [
 			// services
-			'mapper' => 'JP\LeanMapperExtension\Mapper', // string|FALSE|NULL
-			'entityFactory' => 'LeanMapper\DefaultEntityFactory',
-			'connection' => 'LeanMapper\Connection',
+			'mapper' => Mapper::class, // string|FALSE|NULL
+			'entityFactory' => \LeanMapper\DefaultEntityFactory::class,
+			'connection' => \LeanMapper\Connection::class,
 
 			// mapper
 			'defaultEntityNamespace' => NULL,
@@ -46,7 +46,7 @@
 			// use profiler?
 			$useProfiler = isset($config['profiler'])
 				? $config['profiler']
-				: class_exists('Tracy\Debugger') && $builder->parameters['debugMode'];
+				: class_exists(\Tracy\Debugger::class) && $builder->parameters['debugMode'];
 
 			unset($config['profiler']);
 
@@ -60,7 +60,7 @@
 			// profiler
 			if ($useProfiler) {
 				$panel = $builder->addDefinition($this->prefix('panel'))
-					->setClass('Dibi\Bridges\Tracy\Panel');
+					->setClass(\Dibi\Bridges\Tracy\Panel::class);
 
 				$connection->addSetup([$panel, 'register'], [$connection]);
 			}
