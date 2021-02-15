@@ -175,6 +175,8 @@
 				$mainMapper = $prefixMapper;
 			}
 
+			$mainMapper = $this->configureStiMapper($mainMapper, $config);
+
 			return $mainMapper;
 		}
 
@@ -243,6 +245,68 @@
 			}
 
 			return $usesMapping;
+		}
+
+
+		/**
+		 * @return ServiceDefinition
+		 */
+		protected function configureStiMapper(ServiceDefinition $mainMapper, array $config)
+		{
+			$builder = $this->getContainerBuilder();
+			$stiMapper = $builder->addDefinition($this->prefix('stiMapper'));
+			$usesMapping = FALSE;
+
+			foreach ($this->compiler->getExtensions() as $extension) {
+				if (!($extension instanceof IStiMappingProvider)) {
+					continue;
+				}
+
+				$mappings = $extension->getStiMappings();
+				Assert::true(is_array($mappings), 'STI mappings from extension must be array.');
+
+				foreach ($mappings as $mapping) {
+					Assert::true(is_array($mapping), 'STI mapping must be array.');
+					Assert::true(isset($mapping['baseEntity']), "STI mapping - missing key 'baseEntity'");
+					Assert::true(isset($mapping['type']), "STI mapping - missing key 'type'");
+					Assert::true(isset($mapping['entity']), "STI mapping - missing key 'entity'");
+
+					Assert::string($mapping['baseEntity'], "STI mapping - key 'baseEntity' must be string");
+					Assert::true(is_string($mapping['type']) || is_int($mapping['type']), "STI mapping - key 'type' must be string|int");
+					Assert::string($mapping['entity'], "STI mapping - key 'entity' must be string");
+
+					$stiMapper->addSetup('registerStiType', [
+						$mapping['baseEntity'],
+						$mapping['type'],
+						$mapping['entity'],
+					]);
+					$usesMapping = TRUE;
+				}
+
+				$typeFields = $extension->getStiTypeFields();
+				Assert::true(is_array($typeFields), 'STI type fields from extension must be array.');
+
+				foreach ($typeFields as $baseEntity => $typeField) {
+					Assert::string($typeField, "STI type field must be string");
+
+					$stiMapper->addSetup('registerTypeField', [
+						$baseEntity,
+						$typeField,
+					]);
+					$usesMapping = TRUE;
+				}
+			}
+
+			if ($usesMapping) {
+				$stiMapper->setFactory(Mappers\StiMapper::class, [$mainMapper]);
+				$mainMapper->setAutowired('self');
+				$mainMapper = $stiMapper;
+
+			} else {
+				$builder->removeDefinition($this->prefix('stiMapper'));
+			}
+
+			return $mainMapper;
 		}
 
 

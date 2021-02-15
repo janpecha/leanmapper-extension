@@ -1,0 +1,6 @@
+
+extensions:
+	foo: Foo\DI\FooExtension
+
+leanmapper:
+	driver: fakeMysql

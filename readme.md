@@ -124,6 +124,36 @@ class FooExtension extends CompilerExtension implements IEntityProvider
 }
 ```
 
+STI mapping
+
+``` php
+use Nette\DI\CompilerExtension;
+use JP\LeanMapperExtension\IStiMappingProvider;
+
+class FooExtension extends CompilerExtension implements IStiMappingProvider
+{
+	function getStiMappings()
+	{
+		return [
+			[
+				'baseEntity' => Model\Entity\Client::class,
+				'type' => 'company',
+				'entity' => Model\Entity\ClientCompany::class,
+			],
+			// ...
+		];
+	}
+
+
+	function getStiTypeFields()
+	{
+		return [
+			Model\Entity\Client::class => 'clientType',
+		];
+	}
+}
+```
+
 ------------------------------
 
 License: [New BSD License](license.md)
