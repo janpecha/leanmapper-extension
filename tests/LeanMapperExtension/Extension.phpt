@@ -85,6 +85,30 @@ test(function () {
 	Assert::same('news_id', $mapper->getPrimaryKey('newslist'));
 });
 
+// name mapping - default
+test(function () {
+	$container = createContainer('nameMapping.default');
+
+	$mapper = $container->getByType(LeanMapper\IMapper::class);
+	Assert::true($mapper instanceof \Inlm\Mappers\DefaultMapper);
+});
+
+// name mapping - camelcase
+test(function () {
+	$container = createContainer('nameMapping.camelcase');
+
+	$mapper = $container->getByType(LeanMapper\IMapper::class);
+	Assert::true($mapper instanceof \Inlm\Mappers\CamelCaseMapper);
+});
+
+// name mapping - underscore
+test(function () {
+	$container = createContainer('nameMapping.underscore');
+
+	$mapper = $container->getByType(LeanMapper\IMapper::class);
+	Assert::true($mapper instanceof \Inlm\Mappers\UnderScoreMapper);
+});
+
 // Prefix
 test(function () {
 	$container = createContainer('prefix');
