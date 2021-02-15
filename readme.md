@@ -74,7 +74,7 @@ leanmapper:
 ``` neon
 leanmapper:
 	entityFactory: LeanMapper\DefaultEntityFactory
-	mapping:
+	entityMapping:
 		table: EntityClass
 
 		table:
@@ -92,8 +92,9 @@ leanmapper:
 
 ``` neon
 leanmapper:
-	mapper: JP\LeanMapperExtension\Mapper
+	mapper: true # bool
 	defaultEntityNamespace: 'Model\Entity'
+	nameMapping: camelcase # default | camelcase | underscore
 ```
 
 
@@ -121,17 +122,6 @@ class FooExtension extends CompilerExtension implements IEntityProvider
 		);
 	}
 }
-```
-
-
-Mapper (for experts)
-------
-
-``` php
-$mapper = JP\LeanMapperExtension\Mapper($defaultEntityNamespace = NULL);
-
-// register entity
-$mapper->register($tableName, $entity = NULL, $repository = NULL, $primaryKey = NULL);
 ```
 
 ------------------------------

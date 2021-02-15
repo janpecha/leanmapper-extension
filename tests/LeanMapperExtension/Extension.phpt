@@ -67,7 +67,7 @@ test(function () {
 	Assert::true($newsRepository instanceof NewsRepository);
 
 	$mapper = $container->getByType(LeanMapper\IMapper::class);
-	Assert::true($mapper instanceof JP\LeanMapperExtension\Mapper);
+	Assert::true($mapper instanceof \Inlm\Mappers\DynamicMapper);
 
 	Assert::same('UserEntity', $mapper->getEntityClass('user'));
 	Assert::same('user', $mapper->getTableByRepositoryClass(Model\UserRepository::class)); // fallback

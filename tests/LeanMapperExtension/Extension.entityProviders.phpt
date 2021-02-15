@@ -82,7 +82,7 @@ namespace
 		}, Nette\DI\MissingServiceException::class);
 
 		$mapper = $container->getByType(LeanMapper\IMapper::class);
-		Assert::true($mapper instanceof JP\LeanMapperExtension\Mapper);
+		Assert::true($mapper instanceof Inlm\Mappers\DynamicMapper);
 		Assert::same(Foo\Model\Article::class, $mapper->getEntityClass('foo_articles'));
 		Assert::same('foo_articles', $mapper->getTableByRepositoryClass(Foo\Model\ArticleRepository::class));
 		Assert::same('foo_articles', $mapper->getTable(Foo\Model\Article::class));

@@ -2,16 +2,23 @@
 
 	namespace JP\LeanMapperExtension;
 
+	use CzProject\Assert\Assert;
+	use Inlm\Mappers;
 	use Nette\DI\ServiceDefinition;
 	use Nette\DI\ContainerBuilder;
+	use Nette\Utils\Strings;
 	use Nette;
 
 
 	class LeanMapperExtension extends \Nette\DI\CompilerExtension
 	{
+		const NAME_MAPPING_DEFAULT = 'default';
+		const NAME_MAPPING_CAMELCASE = 'camelcase';
+		const NAME_MAPPING_UNDERSCORE = 'underscore';
+
 		public $defaults = [
 			// services
-			'mapper' => Mapper::class, // string|FALSE|NULL
+			'mapper' => TRUE,
 			'entityFactory' => \LeanMapper\DefaultEntityFactory::class,
 			'connection' => \LeanMapper\Connection::class,
 
@@ -27,8 +34,15 @@
 			'lazy' => TRUE,
 			'charset' => NULL,
 
-			// entities
-			'mapping' => NULL,
+			// mapper
+			'nameMapping' => self::NAME_MAPPING_CAMELCASE,
+			'entityMapping' => NULL,
+		];
+
+		private $nameMappers = [
+			self::NAME_MAPPING_DEFAULT => Mappers\DefaultMapper::class,
+			self::NAME_MAPPING_CAMELCASE => Mappers\CamelCaseMapper::class,
+			self::NAME_MAPPING_UNDERSCORE => Mappers\UnderScoreMapper::class,
 		];
 
 
@@ -123,40 +137,53 @@
 		 */
 		protected function configMapper(ContainerBuilder $builder, array $config)
 		{
-			$mapperClass = $config['mapper'];
+			Assert::bool($config['mapper'], "Option 'mapper' must be bool");
 
-			if ($mapperClass === FALSE || $mapperClass === NULL) {
+			if (!$config['mapper']) {
 				return NULL;
 			}
 
-			if ($config['defaultEntityNamespace'] !== NULL && !is_string($config['defaultEntityNamespace'])) {
-				throw new \RuntimeException('DefaultEntityNamespace must be NULL or string, ' . gettype($config['defaultEntityNamespace']) . ' given');
+			Assert::stringOrNull($config['defaultEntityNamespace'], "Option 'defaultEntityNamespace' must be string|NULL");
+			Assert::string($config['nameMapping'], "Option 'nameMapping' must be string");
+			$config['nameMapping'] = Strings::lower($config['nameMapping']);
+			Assert::in($config['nameMapping'], array_keys($this->nameMappers), "Invalid value for option 'nameMapping'");
+
+			$nameMapper = $builder->addDefinition($this->prefix('nameMapper'))
+				->setClass($this->nameMappers[$config['nameMapping']], [$config['defaultEntityNamespace']]);
+			$mainMapper = $nameMapper;
+
+			$dynamicMapper = $builder->addDefinition($this->prefix('dynamicMapper'));
+			$usesDynamicMapper = $this->processEntityProviders($dynamicMapper, $config);
+			$usesDynamicMapper |= $this->processUserMapping($dynamicMapper, $config);
+
+			if ($usesDynamicMapper) {
+				$dynamicMapper->setClass(Mappers\DynamicMapper::class, [$mainMapper]);
+				$mainMapper->setAutowired('self');
+				$mainMapper = $dynamicMapper;
+
+			} else {
+				$builder->removeDefinition($this->prefix('dynamicMapper'));
 			}
 
-			$mapper = $builder->addDefinition($this->prefix('mapper'))
-				->setClass($config['mapper'], [$config['defaultEntityNamespace']]);
-
-			$this->processEntityProviders($mapper, $config);
-			$this->processUserMapping($mapper, $config);
-
-			return $mapper;
+			return $mainMapper;
 		}
 
 
 		/**
 		 * Processes user entities mapping + registers repositories in container
-		 * @return void
+		 * @return bool
 		 */
 		protected function processUserMapping(ServiceDefinition $mapper, array $config)
 		{
 			$builder = $this->getContainerBuilder();
+			$usesMapping = FALSE;
 
-			if (isset($config['mapping'])) {
-				if (!is_array($config['mapping'])) {
-					throw new \RuntimeException('Mapping must be array, ' . gettype($config['mapping']) . ' given');
+			if (isset($config['entityMapping'])) {
+				if (!is_array($config['entityMapping'])) {
+					throw new \RuntimeException('Mapping must be array, ' . gettype($config['entityMapping']) . ' given');
 				}
 
-				foreach ($config['mapping'] as $tableName => $mapping) {
+				foreach ($config['entityMapping'] as $tableName => $mapping) {
 					if (isset($mapping['repository']) && !is_string($mapping['repository'])) {
 						throw new \RuntimeException('Repository class must be string or NULL, ' . gettype($mapping['primaryKey']) . ' given');
 					}
@@ -168,7 +195,7 @@
 					}
 
 					$mapping['table'] = $tableName;
-					$this->registerInMapper($mapper, $mapping);
+					$usesMapping |= $this->registerInMapper($mapper, $mapping);
 
 					// auto-register of repository in Container
 					if (isset($mapping['repository'])) {
@@ -176,16 +203,20 @@
 					}
 				}
 			}
+
+			return $usesMapping;
 		}
 
 
 		/**
 		 * @see    https://github.com/Kdyby/Doctrine/blob/6fc930a79ecadca326722f1c53cab72d56ee2a90/src/Kdyby/Doctrine/DI/OrmExtension.php#L255-L278
 		 * @see    http://forum.nette.org/en/18888-extending-extensions-solid-modular-concept
+		 * @return bool
 		 */
 		protected function processEntityProviders(ServiceDefinition $mapper, array $config)
 		{
 			$builder = $this->getContainerBuilder();
+			$usesMapping = FALSE;
 
 			foreach ($this->compiler->getExtensions() as $extension) {
 				if ($extension instanceof IEntityProvider) {
@@ -200,7 +231,7 @@
 							if (!is_array($mapping) && !is_null($mapping)) {
 								throw new \InvalidArgumentException('Entity mapping must be array or NULL, '. gettype($mapping) . ' given.');
 							}
-							$this->registerInMapper($mapper, $mapping);
+							$usesMapping |= $this->registerInMapper($mapper, $mapping);
 
 							if (isset($mapping['repository']) && (!isset($mapping['registerRepository']) || $mapping['registerRepository'])) {
 								$this->registerRepositoryInContainer($builder, $mapping['repository']);
@@ -209,6 +240,8 @@
 					}
 				}
 			}
+
+			return $usesMapping;
 		}
 
 
@@ -227,12 +260,12 @@
 		 * Registers new entity in mapper
 		 * @param  ServiceDefinition
 		 * @param  array  [table => '', primaryKey => '', entity => '', repository => '']
-		 * @return void
+		 * @return bool
 		 */
 		protected function registerInMapper(ServiceDefinition $mapper, array $mapping = NULL)
 		{
 			if ($mapping === NULL) {
-				return;
+				return FALSE;
 			}
 
 			if (!isset($mapping['table']) || !is_string($mapping['table'])) {
@@ -254,7 +287,8 @@
 				throw new \InvalidArgumentException('Primary key must be string or NULL, ' . gettype($primaryKey) . ' given');
 			}
 
-			$mapper->addSetup('register', [$mapping['table'], $mapping['entity'], $repositoryClass, $primaryKey]);
+			$mapper->addSetup('setMapping', [$mapping['table'], $mapping['entity'], $repositoryClass, $primaryKey]);
+			return TRUE;
 		}
 
 
