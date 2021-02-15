@@ -176,6 +176,7 @@
 			}
 
 			$mainMapper = $this->configureStiMapper($mainMapper, $config);
+			$mainMapper = $this->configureRowMapper($mainMapper, $config);
 
 			return $mainMapper;
 		}
@@ -304,6 +305,74 @@
 
 			} else {
 				$builder->removeDefinition($this->prefix('stiMapper'));
+			}
+
+			return $mainMapper;
+		}
+
+
+		/**
+		 * @return ServiceDefinition
+		 */
+		protected function configureRowMapper(ServiceDefinition $mainMapper, array $config)
+		{
+			$builder = $this->getContainerBuilder();
+			$rowMapper = $builder->addDefinition($this->prefix('rowMapper'));
+			$usesMapping = FALSE;
+
+			foreach ($this->compiler->getExtensions() as $extension) {
+				if (!($extension instanceof IRowMappingProvider)) {
+					continue;
+				}
+
+				$mappings = $extension->getRowFieldMappings();
+				Assert::true(is_array($mappings), 'Row field mapping from extension must be array.');
+
+				foreach ($mappings as $mapping) {
+					Assert::true(is_array($mapping), 'Row field mapping must be array.');
+					Assert::true(isset($mapping['entity']), "Row mapping - missing key 'entity'");
+					Assert::true(isset($mapping['field']), "Row mapping - missing key 'field'");
+
+					Assert::string($mapping['entity'], "Row mapping - key 'entity' must be string");
+					Assert::string($mapping['field'], "Row mapping - key 'field' must be string");
+
+					$rowMapper->addSetup('registerFieldMapping', [
+						$mapping['entity'],
+						$mapping['field'],
+						isset($mapping['fromDbValue']) ? $mapping['fromDbValue'] : NULL,
+						isset($mapping['toDbValue']) ? $mapping['toDbValue'] : NULL,
+					]);
+					$usesMapping = TRUE;
+				}
+
+				$mappings = $extension->getRowMultiValueMappings();
+				Assert::true(is_array($mappings), 'Row field mapping from extension must be array.');
+
+				foreach ($mappings as $mapping) {
+					Assert::true(is_array($mapping), 'Row field mapping must be array.');
+					Assert::true(isset($mapping['entity']), "Row mapping - missing key 'entity'");
+					Assert::true(isset($mapping['field']), "Row mapping - missing key 'field'");
+
+					Assert::string($mapping['entity'], "Row mapping - key 'entity' must be string");
+					Assert::string($mapping['field'], "Row mapping - key 'field' must be string");
+
+					$rowMapper->addSetup('registerMultiValueMapping', [
+						$mapping['entity'],
+						$mapping['field'],
+						isset($mapping['fromDbValue']) ? $mapping['fromDbValue'] : NULL,
+						isset($mapping['toDbValue']) ? $mapping['toDbValue'] : NULL,
+					]);
+					$usesMapping = TRUE;
+				}
+			}
+
+			if ($usesMapping) {
+				$rowMapper->setFactory(Mappers\RowMapper::class, [$mainMapper]);
+				$mainMapper->setAutowired('self');
+				$mainMapper = $rowMapper;
+
+			} else {
+				$builder->removeDefinition($this->prefix('rowMapper'));
 			}
 
 			return $mainMapper;
