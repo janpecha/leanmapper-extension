@@ -23,7 +23,7 @@
 			'connection' => \LeanMapper\Connection::class,
 
 			// mapper
-			'defaultEntityNamespace' => NULL,
+			'defaultEntityNamespace' => 'Model\\Entity',
 
 			// connection
 			'host' => 'localhost',
