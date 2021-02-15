@@ -196,11 +196,6 @@
 
 					$mapping['table'] = $tableName;
 					$usesMapping |= $this->registerInMapper($mapper, $mapping);
-
-					// auto-register of repository in Container
-					if (isset($mapping['repository'])) {
-						$this->registerRepositoryInContainer($builder, $mapping['repository']);
-					}
 				}
 			}
 
@@ -232,27 +227,12 @@
 								throw new \InvalidArgumentException('Entity mapping must be array or NULL, '. gettype($mapping) . ' given.');
 							}
 							$usesMapping |= $this->registerInMapper($mapper, $mapping);
-
-							if (isset($mapping['repository']) && (!isset($mapping['registerRepository']) || $mapping['registerRepository'])) {
-								$this->registerRepositoryInContainer($builder, $mapping['repository']);
-							}
 						}
 					}
 				}
 			}
 
 			return $usesMapping;
-		}
-
-
-		protected function registerRepositoryInContainer($builder, $repositoryClass)
-		{
-			if (!is_string($repositoryClass)) {
-				throw new \RuntimeException('RepositoryClass must be string, ');
-			}
-			$repository = strtr($repositoryClass, '\\', '_');
-			$builder->addDefinition("repositories.$repository")
-				->setFactory($repositoryClass);
 		}
 
 

@@ -12,3 +12,7 @@ leanmapper:
 		articles:
 			entity: App\Model\Article
 			primaryKey: article_id
+
+
+services:
+	- NewsRepository

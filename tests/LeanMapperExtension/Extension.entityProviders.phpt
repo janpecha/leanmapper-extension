@@ -18,9 +18,17 @@ namespace Foo\DI
 	use Nette\DI\CompilerExtension;
 	use JP\LeanMapperExtension\IEntityProvider;
 
-
 	class FooExtension extends CompilerExtension implements IEntityProvider
 	{
+		public function loadConfiguration()
+		{
+			$builder = $this->getContainerBuilder();
+
+			$builder->addDefinition($this->prefix('newsRepository'))
+				->setFactory(\Foo\Model\ArticleRepository::class);
+		}
+
+
 		// from IEntityProvider
 		function getEntityMappings()
 		{
@@ -36,7 +44,6 @@ namespace Foo\DI
 					'primaryKey' => 'id_news',
 					'entity' => \Foo\Model\News::class,
 					'repository' => \Foo\Model\NewsRepository::class,
-					'registerRepository' => FALSE,
 				],
 			];
 		}

@@ -79,7 +79,7 @@ leanmapper:
 
 		table:
 			entity: EntityClass
-			repository: RepositoryClass # repository is auto-registred in DI container
+			repository: RepositoryClass # only mapping, you need manually register repository to DI
 			primaryKey: table_primary_key
 
 		articles:
@@ -115,8 +115,7 @@ class FooExtension extends CompilerExtension implements IEntityProvider
 				'table' => 'foo_articles',
 				'primaryKey' => 'id',
 				'entity' => Foo\Model\Article::class,
-				'repository' => Foo\Model\ArticleRepository::class, # repository is auto-registred in DI container, see option 'registerRepository'
-				'registerRepository' => TRUE, // optional
+				'repository' => Foo\Model\ArticleRepository::class, # only mapping, you need manually register repository to DI
 			),
 			// ...
 		);
