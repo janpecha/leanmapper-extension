@@ -72,7 +72,7 @@
 			// profiler
 			if ($connection && $useProfiler) {
 				$panel = $builder->addDefinition($this->prefix('panel'))
-					->setClass(\Dibi\Bridges\Tracy\Panel::class);
+					->setFactory(\Dibi\Bridges\Tracy\Panel::class);
 
 				$connection->addSetup([$panel, 'register'], [$connection]);
 			}
@@ -96,7 +96,7 @@
 			}
 
 			return $builder->addDefinition($this->prefix('connection'))
-				->setClass($config['connection'], [
+				->setFactory($config['connection'], [
 					[
 						'host' => $config['host'],
 						'driver' => $config['driver'],
@@ -127,7 +127,7 @@
 			}
 
 			return $builder->addDefinition($this->prefix('entityFactory'))
-				->setClass($config['entityFactory']);
+				->setFactory($config['entityFactory']);
 		}
 
 
@@ -149,7 +149,7 @@
 			Assert::in($config['nameMapping'], array_keys($this->nameMappers), "Invalid value for option 'nameMapping'");
 
 			$nameMapper = $builder->addDefinition($this->prefix('nameMapper'))
-				->setClass($this->nameMappers[$config['nameMapping']], [$config['defaultEntityNamespace']]);
+				->setFactory($this->nameMappers[$config['nameMapping']], [$config['defaultEntityNamespace']]);
 			$mainMapper = $nameMapper;
 
 			$dynamicMapper = $builder->addDefinition($this->prefix('dynamicMapper'));
@@ -157,7 +157,7 @@
 			$usesDynamicMapper |= $this->processUserMapping($dynamicMapper, $config);
 
 			if ($usesDynamicMapper) {
-				$dynamicMapper->setClass(Mappers\DynamicMapper::class, [$mainMapper]);
+				$dynamicMapper->setFactory(Mappers\DynamicMapper::class, [$mainMapper]);
 				$mainMapper->setAutowired('self');
 				$mainMapper = $dynamicMapper;
 
@@ -252,7 +252,7 @@
 			}
 			$repository = strtr($repositoryClass, '\\', '_');
 			$builder->addDefinition("repositories.$repository")
-				->setClass($repositoryClass);
+				->setFactory($repositoryClass);
 		}
 
 
