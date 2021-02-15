@@ -85,6 +85,16 @@ test(function () {
 	Assert::same('news_id', $mapper->getPrimaryKey('newslist'));
 });
 
+// Prefix
+test(function () {
+	$container = createContainer('prefix');
+
+	$mapper = $container->getByType(LeanMapper\IMapper::class);
+	Assert::true($mapper instanceof \Inlm\Mappers\PrefixMapper);
+
+	Assert::same('prefix_user', $mapper->getTable(User::class));
+});
+
 
 // Disable
 test(function () {

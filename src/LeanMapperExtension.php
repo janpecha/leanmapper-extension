@@ -37,6 +37,7 @@
 			// mapper
 			'nameMapping' => self::NAME_MAPPING_CAMELCASE,
 			'entityMapping' => NULL,
+			'prefix' => NULL,
 		];
 
 		private $nameMappers = [
@@ -163,6 +164,15 @@
 
 			} else {
 				$builder->removeDefinition($this->prefix('dynamicMapper'));
+			}
+
+			Assert::stringOrNull($config['prefix'], "Option 'prefix' must be string|NULL.");
+
+			if (is_string($config['prefix'])) {
+				$prefixMapper = $builder->addDefinition($this->prefix('prefixMapper'))
+					->setFactory(Mappers\PrefixMapper::class, [$config['prefix'], $mainMapper]);
+				$mainMapper->setAutowired('self');
+				$mainMapper = $prefixMapper;
 			}
 
 			return $mainMapper;

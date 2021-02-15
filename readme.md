@@ -95,6 +95,7 @@ leanmapper:
 	mapper: true # bool
 	defaultEntityNamespace: 'Model\Entity'
 	nameMapping: camelcase # default | camelcase | underscore
+	prefix: null
 ```
 
 
