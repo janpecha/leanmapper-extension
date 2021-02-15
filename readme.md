@@ -65,7 +65,7 @@ leanmapper:
 	driver: mysqli
 	lazy: true
 	profiler: ...    # on|off or NULL => enabled in debug mode, disabled in production mode
-	charset: ...
+	charset: utf8mb
 ```
 
 

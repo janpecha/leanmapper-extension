@@ -32,7 +32,7 @@
 			'password' => NULL,
 			'database' => NULL,
 			'lazy' => TRUE,
-			'charset' => NULL,
+			'charset' => 'utf8mb',
 
 			// mapper
 			'nameMapping' => self::NAME_MAPPING_CAMELCASE,
