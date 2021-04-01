@@ -16,6 +16,7 @@
 		const NAME_MAPPING_CAMELCASE = 'camelcase';
 		const NAME_MAPPING_UNDERSCORE = 'underscore';
 
+		/** @var array<string, mixed> */
 		public $defaults = [
 			// services
 			'mapper' => TRUE,
@@ -40,6 +41,7 @@
 			'prefix' => NULL,
 		];
 
+		/** @var array<string, class-string> */
 		private $nameMappers = [
 			self::NAME_MAPPING_DEFAULT => Mappers\DefaultMapper::class,
 			self::NAME_MAPPING_CAMELCASE => Mappers\CamelCaseMapper::class,
@@ -82,7 +84,8 @@
 
 		/**
 		 * Adds connection service into container
-		 * @return ServiceDefinition
+		 * @param  array<string, mixed> $config
+		 * @return ServiceDefinition|NULL
 		 */
 		protected function configConnection(ContainerBuilder $builder, array $config)
 		{
@@ -113,7 +116,8 @@
 
 		/**
 		 * Adds connection service into container
-		 * @return ServiceDefinition
+		 * @param  array<string, mixed> $config
+		 * @return ServiceDefinition|NULL
 		 */
 		protected function configEntityFactory(ContainerBuilder $builder, array $config)
 		{
@@ -134,6 +138,7 @@
 
 		/**
 		 * Adds mapper service into container
+		 * @param  array<string, mixed> $config
 		 * @return ServiceDefinition|NULL
 		 */
 		protected function configMapper(ContainerBuilder $builder, array $config)
@@ -155,7 +160,7 @@
 
 			$dynamicMapper = $builder->addDefinition($this->prefix('dynamicMapper'));
 			$usesDynamicMapper = $this->processEntityProviders($dynamicMapper, $config);
-			$usesDynamicMapper |= $this->processUserMapping($dynamicMapper, $config);
+			$usesDynamicMapper = $this->processUserMapping($dynamicMapper, $config) || $usesDynamicMapper;
 
 			if ($usesDynamicMapper) {
 				$dynamicMapper->setFactory(Mappers\DynamicMapper::class, [$mainMapper]);
@@ -184,6 +189,7 @@
 
 		/**
 		 * Processes user entities mapping + registers repositories in container
+		 * @param  array<string, mixed> $config
 		 * @return bool
 		 */
 		protected function processUserMapping(ServiceDefinition $mapper, array $config)
@@ -208,7 +214,7 @@
 					}
 
 					$mapping['table'] = $tableName;
-					$usesMapping |= $this->registerInMapper($mapper, $mapping);
+					$usesMapping = $this->registerInMapper($mapper, $mapping) || $usesMapping;
 				}
 			}
 
@@ -219,6 +225,7 @@
 		/**
 		 * @see    https://github.com/Kdyby/Doctrine/blob/6fc930a79ecadca326722f1c53cab72d56ee2a90/src/Kdyby/Doctrine/DI/OrmExtension.php#L255-L278
 		 * @see    http://forum.nette.org/en/18888-extending-extensions-solid-modular-concept
+		 * @param  array<string, mixed> $config
 		 * @return bool
 		 */
 		protected function processEntityProviders(ServiceDefinition $mapper, array $config)
@@ -230,17 +237,17 @@
 				if ($extension instanceof IEntityProvider) {
 					$mappings = $extension->getEntityMappings();
 
-					if (!is_array($mappings) && !is_null($mappings)) {
-						throw new \InvalidArgumentException('Mappings must be array or NULL, '. gettype($mappings) . ' given.');
-					}
-
 					if (is_array($mappings)) {
 						foreach ($mappings as $mapping) {
-							if (!is_array($mapping) && !is_null($mapping)) {
-								throw new \InvalidArgumentException('Entity mapping must be array or NULL, '. gettype($mapping) . ' given.');
+							if (!is_array($mapping)) {
+								throw new \InvalidArgumentException('Entity mapping must be array, '. gettype($mapping) . ' given.');
 							}
-							$usesMapping |= $this->registerInMapper($mapper, $mapping);
+							$usesMapping = $this->registerInMapper($mapper, $mapping) || $usesMapping;
 						}
+
+					} elseif (!is_null($mappings)) {
+						throw new \InvalidArgumentException('Mappings must be array or NULL, '. gettype($mappings) . ' given.');
+
 					}
 				}
 			}
@@ -250,6 +257,7 @@
 
 
 		/**
+		 * @param  array<string, mixed> $config
 		 * @return ServiceDefinition
 		 */
 		protected function configureStiMapper(ServiceDefinition $mainMapper, array $config)
@@ -312,6 +320,7 @@
 
 
 		/**
+		 * @param  array<string, mixed> $config
 		 * @return ServiceDefinition
 		 */
 		protected function configureRowMapper(ServiceDefinition $mainMapper, array $config)
@@ -381,8 +390,8 @@
 
 		/**
 		 * Registers new entity in mapper
-		 * @param  ServiceDefinition
-		 * @param  array  [table => '', primaryKey => '', entity => '', repository => '']
+		 * @param  array $mapping  [table => '', primaryKey => '', entity => '', repository => '']
+		 * @phpstan-param array<string, mixed> $mapping
 		 * @return bool
 		 */
 		protected function registerInMapper(ServiceDefinition $mapper, array $mapping = NULL)
@@ -416,8 +425,7 @@
 
 
 		/**
-		 * @param  Nette\Configurator
-		 * @param  string
+		 * @param  string $name
 		 * @return void
 		 */
 		public static function register(Nette\Configurator $configurator, $name = 'leanmapper')

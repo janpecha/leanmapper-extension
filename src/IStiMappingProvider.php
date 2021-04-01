@@ -7,6 +7,7 @@
 	{
 		/**
 		 * @return array  [[baseEntity, type, entity],...]
+		 * @phpstan-return array<array<string, mixed>>
 		 */
 		function getStiMappings();
 

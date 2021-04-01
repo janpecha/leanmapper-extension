@@ -107,6 +107,6 @@ namespace
 	test(function () {
 		Assert::exception(function () {
 			$container = createContainer('addons.broken-mapping');
-		}, InvalidArgumentException::class, 'Entity mapping must be array or NULL, string given.');
+		}, InvalidArgumentException::class, 'Entity mapping must be array, string given.');
 	});
 }
