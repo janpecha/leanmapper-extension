@@ -21,7 +21,7 @@ composer require janpecha/leanmapper-extension
 ```
 
 Extension requires:
-* PHP 5.6 or later
+* PHP 7.2 or later
 * Nette 2.4 or later
 * LeanMapper 3.0 or later
 

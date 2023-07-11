@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace
 {
 	require __DIR__ . '/bootstrap.php';
