@@ -174,11 +174,11 @@ class FooExtension extends CompilerExtension implements IRowMappingProvider
 	function getRowMultiValueMappings()
 	{
 		return [
-			[
-				'entity' => \Model\Entity\OrderItem::class,
-				'field' => 'price',
-				'fromDbValue' => [static::class, 'priceFromDb'],
-				'toDbValue' => [static::class, 'priceToDb'],
+			\Model\Entity\OrderItem::class => [
+				'price' => [
+					'fromDbValue' => [static::class, 'priceFromDb'],
+					'toDbValue' => [static::class, 'priceToDb'],
+				],
 			],
 		];
 	}

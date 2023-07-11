@@ -377,20 +377,40 @@
 				$mappings = $extension->getRowMultiValueMappings();
 				Assert::true(is_array($mappings), 'Row field mapping from extension must be array.');
 
-				foreach ($mappings as $mapping) {
+				foreach ($mappings as $entityName => $mapping) {
 					Assert::true(is_array($mapping), 'Row field mapping must be array.');
-					Assert::true(isset($mapping['entity']), "Row mapping - missing key 'entity'");
-					Assert::true(isset($mapping['field']), "Row mapping - missing key 'field'");
 
-					Assert::string($mapping['entity'], "Row mapping - key 'entity' must be string");
-					Assert::string($mapping['field'], "Row mapping - key 'field' must be string");
+					if (is_string($entityName)) { // new syntax
+						foreach ($mapping as $fieldName => $fieldMapping) {
+							if (!is_array($fieldMapping)) {
+								throw new \InvalidArgumentException('Row field mapping for field ' . $entityName . '::$' . $fieldName . ' must be array.');
+							}
 
-					$rowMapper->addSetup('registerMultiValueMapping', [
-						$mapping['entity'],
-						$mapping['field'],
-						isset($mapping['fromDbValue']) ? $mapping['fromDbValue'] : NULL,
-						isset($mapping['toDbValue']) ? $mapping['toDbValue'] : NULL,
-					]);
+							Assert::string($fieldName, "Row mapping - field name must be string");
+
+							$rowMapper->addSetup('registerMultiValueMapping', [
+								$entityName,
+								$fieldName,
+								isset($fieldMapping['fromDbValue']) ? $fieldMapping['fromDbValue'] : NULL,
+								isset($fieldMapping['toDbValue']) ? $fieldMapping['toDbValue'] : NULL,
+							]);
+						}
+
+					} else {
+						Assert::true(isset($mapping['entity']), "Row mapping - missing key 'entity'");
+						Assert::true(isset($mapping['field']), "Row mapping - missing key 'field'");
+
+						Assert::string($mapping['entity'], "Row mapping - key 'entity' must be string");
+						Assert::string($mapping['field'], "Row mapping - key 'field' must be string");
+
+						$rowMapper->addSetup('registerMultiValueMapping', [
+							$mapping['entity'],
+							$mapping['field'],
+							isset($mapping['fromDbValue']) ? $mapping['fromDbValue'] : NULL,
+							isset($mapping['toDbValue']) ? $mapping['toDbValue'] : NULL,
+						]);
+					}
+
 					$usesMapping = TRUE;
 				}
 			}

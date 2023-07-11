@@ -39,11 +39,19 @@ namespace Foo\DI
 		function getRowMultiValueMappings()
 		{
 			return [
+				// old syntax
 				[
 					'entity' => \Model\Entity\OrderItem::class,
 					'field' => 'price',
 					'fromDbValue' => [static::class, 'priceFromDb'],
 					'toDbValue' => [static::class, 'priceToDb'],
+				],
+				// new syntax
+				\Model\Entity\Order::class => [
+					'price' => [
+						'fromDbValue' => [static::class, 'priceFromDb'],
+						'toDbValue' => [static::class, 'priceToDb'],
+					],
 				],
 			];
 		}
@@ -118,7 +126,7 @@ namespace
 
 		$rowData = [
 			'id' => 1,
-			'price' => 1234,
+			'price' => [1234, 'EUR'],
 			'currency' => 'EUR',
 		];
 
