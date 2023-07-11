@@ -17,11 +17,19 @@ namespace Foo\DI
 		function getRowFieldMappings()
 		{
 			return [
+				// old syntax
 				[
 					'entity' => \Model\Entity\OrderItem::class,
 					'field' => 'currency',
 					'fromDbValue' => [static::class, 'currencyFromDb'],
 					'toDbValue' => [static::class, 'currencyToDb'],
+				],
+				// new syntax
+				\Model\Entity\Order::class => [
+					'currency' => [
+						'fromDbValue' => [static::class, 'currencyFromDb'],
+						'toDbValue' => [static::class, 'currencyToDb'],
+					]
 				],
 				// ...
 			];
@@ -93,5 +101,28 @@ namespace
 
 		Assert::same($rowData, $mapper->convertToRowData('orderItem', $dbData));
 		Assert::same($dbData, $mapper->convertFromRowData('orderItem', $rowData));
+	});
+
+
+	test(function () {
+		$container = createContainer('rowMapping');
+
+		$mapper = $container->getByType(LeanMapper\IMapper::class);
+		Assert::true($mapper instanceof Inlm\Mappers\RowMapper);
+
+		$dbData = [
+			'id' => 1,
+			'price' => 1234,
+			'currency' => 'eur',
+		];
+
+		$rowData = [
+			'id' => 1,
+			'price' => 1234,
+			'currency' => 'EUR',
+		];
+
+		Assert::same($rowData, $mapper->convertToRowData('order', $dbData));
+		Assert::same($dbData, $mapper->convertFromRowData('order', $rowData));
 	});
 }

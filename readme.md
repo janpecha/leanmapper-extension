@@ -160,11 +160,11 @@ class FooExtension extends CompilerExtension implements IRowMappingProvider
 	function getRowFieldMappings()
 	{
 		return [
-			[
-				'entity' => \Model\Entity\OrderItem::class,
-				'field' => 'currency',
-				'fromDbValue' => [static::class, 'currencyFromDb'],
-				'toDbValue' => [static::class, 'currencyToDb'],
+			\Model\Entity\OrderItem::class => [
+				'currency' => [
+					'fromDbValue' => [static::class, 'currencyFromDb'],
+					'toDbValue' => [static::class, 'currencyToDb'],
+				]
 			],
 			// ...
 		];
