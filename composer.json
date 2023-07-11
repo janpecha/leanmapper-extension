@@ -21,5 +21,8 @@
 			"name": "Jan Pecha",
 			"email": "janpecha@email.cz"
 		}
+	],
+	"funding": [
+		{"type": "other", "url": "https://www.janpecha.cz/donate/"}
 	]
 }
