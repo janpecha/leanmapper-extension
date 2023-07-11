@@ -1,8 +1,10 @@
-
 LeanMapper-extension
 ====================
 
-[![Tests Status](https://github.com/janpecha/leanmapper-extension/workflows/Tests/badge.svg)](https://github.com/janpecha/leanmapper-extension/actions)
+[![Build Status](https://github.com/janpecha/leanmapper-extension/workflows/Build/badge.svg)](https://github.com/janpecha/leanmapper-extension/actions)
+[![Downloads this Month](https://img.shields.io/packagist/dm/janpecha/leanmapper-extension.svg)](https://packagist.org/packages/janpecha/leanmapper-extension)
+[![Latest Stable Version](https://poser.pugx.org/janpecha/leanmapper-extension/v/stable)](https://github.com/janpecha/leanmapper-extension/releases)
+[![License](https://img.shields.io/badge/license-New%20BSD-blue.svg)](https://github.com/janpecha/leanmapper-extension/blob/master/license.md)
 
 [Lean Mapper](http://leanmapper.com/) extension for [Nette](https://nette.org).
 
