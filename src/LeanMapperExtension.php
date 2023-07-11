@@ -6,8 +6,9 @@
 
 	use CzProject\Assert\Assert;
 	use Inlm\Mappers;
-	use Nette\DI\ServiceDefinition;
+	use Nette\DI\Definitions\ServiceDefinition;
 	use Nette\DI\ContainerBuilder;
+	use Nette\Schema\Expect;
 	use Nette\Utils\Strings;
 	use Nette;
 
@@ -18,31 +19,6 @@
 		const NAME_MAPPING_CAMELCASE = 'camelcase';
 		const NAME_MAPPING_UNDERSCORE = 'underscore';
 
-		/** @var array<string, mixed> */
-		public $defaults = [
-			// services
-			'mapper' => TRUE,
-			'entityFactory' => \LeanMapper\DefaultEntityFactory::class,
-			'connection' => \LeanMapper\Connection::class,
-
-			// mapper
-			'defaultEntityNamespace' => 'Model\\Entity',
-
-			// connection
-			'host' => 'localhost',
-			'driver' => 'mysqli',
-			'username' => NULL,
-			'password' => NULL,
-			'database' => NULL,
-			'lazy' => TRUE,
-			'charset' => 'utf8mb4',
-
-			// mapper
-			'nameMapping' => self::NAME_MAPPING_CAMELCASE,
-			'entityMapping' => NULL,
-			'prefix' => NULL,
-		];
-
 		/** @var array<string, class-string> */
 		private $nameMappers = [
 			self::NAME_MAPPING_DEFAULT => Mappers\DefaultMapper::class,
@@ -51,16 +27,105 @@
 		];
 
 
+		public function getConfigSchema(): Nette\Schema\Schema
+		{
+			return Expect::structure([
+				// services
+				'mapper' => Expect::bool()
+					->default(TRUE),
+
+				'entityFactory' => Expect::anyOf(
+						Expect::string(),
+						FALSE
+					)
+					->default(\LeanMapper\DefaultEntityFactory::class),
+
+				'connection' => Expect::anyOf(
+						Expect::string(),
+						FALSE
+					)
+					->default(\LeanMapper\Connection::class),
+
+				// mapper
+				'defaultEntityNamespace' => Expect::string()
+					->default('Model\\Entity'),
+
+				// connection
+				'driver' => Expect::string()
+					->default('mysqli'),
+
+				'host' => Expect::string()
+					->nullable()
+					->default('localhost'),
+
+				'username' => Expect::string()
+					->nullable()
+					->default(NULL),
+
+				'password' => Expect::string()
+					->nullable()
+					->default(NULL),
+
+				'database' => Expect::string()
+					->nullable()
+					->default(NULL),
+
+				'lazy' => Expect::bool()
+					->default(TRUE),
+
+				'charset' => Expect::string()
+					->default('utf8mb4')
+					->nullable(),
+
+				// mapper
+				'nameMapping' => Expect::anyOf(
+						self::NAME_MAPPING_CAMELCASE,
+						self::NAME_MAPPING_DEFAULT,
+						self::NAME_MAPPING_UNDERSCORE
+					)
+					->default(self::NAME_MAPPING_CAMELCASE),
+
+				'entityMapping' => Expect::arrayOf(
+						Expect::anyOf(
+							Expect::string(),
+							Expect::structure([
+								'entity' => Expect::string()->required(),
+								'repository' => Expect::string()->nullable(),
+								'primaryKey' => Expect::string()->nullable(),
+							])->castTo('array')
+						),
+						Expect::string()
+					)
+					->default([]),
+
+				'prefix' => Expect::string()
+					->default(NULL)
+					->nullable(),
+
+				'profiler' => Expect::bool()
+					->default(NULL),
+			])
+			->before(function (array $config) {
+				// config alias for 'username'
+				if (!isset($config['username']) && isset($config['user'])) {
+					$config['username'] = $config['user'];
+				}
+
+				unset($config['user']);
+				return $config;
+			})
+			->castTo('array');
+		}
+
+
 		public function loadConfiguration()
 		{
-			$config = $this->getConfig($this->defaults);
+			$config = $this->getConfig();
 			$builder = $this->getContainerBuilder();
 
-			// config alias for 'username'
-			if (!isset($config['username']) && isset($config['user'])) {
-				$config['username'] = $config['user'];
+			if (!is_array($config)) {
+				throw new \RuntimeException("Config must be array, " . gettype($config) . ' given.');
 			}
-			unset($config['user']);
 
 			// use profiler?
 			$useProfiler = isset($config['profiler'])
@@ -87,9 +152,8 @@
 		/**
 		 * Adds connection service into container
 		 * @param  array<string, mixed> $config
-		 * @return ServiceDefinition|NULL
 		 */
-		protected function configConnection(ContainerBuilder $builder, array $config)
+		protected function configConnection(ContainerBuilder $builder, array $config): ?ServiceDefinition
 		{
 			$connectionClass = $config['connection'];
 
@@ -119,9 +183,8 @@
 		/**
 		 * Adds connection service into container
 		 * @param  array<string, mixed> $config
-		 * @return ServiceDefinition|NULL
 		 */
-		protected function configEntityFactory(ContainerBuilder $builder, array $config)
+		protected function configEntityFactory(ContainerBuilder $builder, array $config): ?ServiceDefinition
 		{
 			$entityFactoryClass = $config['entityFactory'];
 
@@ -141,9 +204,8 @@
 		/**
 		 * Adds mapper service into container
 		 * @param  array<string, mixed> $config
-		 * @return ServiceDefinition|NULL
 		 */
-		protected function configMapper(ContainerBuilder $builder, array $config)
+		protected function configMapper(ContainerBuilder $builder, array $config): ?ServiceDefinition
 		{
 			Assert::bool($config['mapper'], "Option 'mapper' must be bool");
 
@@ -161,7 +223,7 @@
 			$mainMapper = $nameMapper;
 
 			$dynamicMapper = $builder->addDefinition($this->prefix('dynamicMapper'));
-			$usesDynamicMapper = $this->processEntityProviders($dynamicMapper, $config);
+			$usesDynamicMapper = $this->processEntityProviders($dynamicMapper);
 			$usesDynamicMapper = $this->processUserMapping($dynamicMapper, $config) || $usesDynamicMapper;
 
 			if ($usesDynamicMapper) {
@@ -182,8 +244,8 @@
 				$mainMapper = $prefixMapper;
 			}
 
-			$mainMapper = $this->configureStiMapper($mainMapper, $config);
-			$mainMapper = $this->configureRowMapper($mainMapper, $config);
+			$mainMapper = $this->configureStiMapper($mainMapper);
+			$mainMapper = $this->configureRowMapper($mainMapper);
 
 			return $mainMapper;
 		}
@@ -192,11 +254,9 @@
 		/**
 		 * Processes user entities mapping + registers repositories in container
 		 * @param  array<string, mixed> $config
-		 * @return bool
 		 */
-		protected function processUserMapping(ServiceDefinition $mapper, array $config)
+		protected function processUserMapping(ServiceDefinition $mapper, array $config): bool
 		{
-			$builder = $this->getContainerBuilder();
 			$usesMapping = FALSE;
 
 			if (isset($config['entityMapping'])) {
@@ -227,12 +287,9 @@
 		/**
 		 * @see    https://github.com/Kdyby/Doctrine/blob/6fc930a79ecadca326722f1c53cab72d56ee2a90/src/Kdyby/Doctrine/DI/OrmExtension.php#L255-L278
 		 * @see    http://forum.nette.org/en/18888-extending-extensions-solid-modular-concept
-		 * @param  array<string, mixed> $config
-		 * @return bool
 		 */
-		protected function processEntityProviders(ServiceDefinition $mapper, array $config)
+		protected function processEntityProviders(ServiceDefinition $mapper): bool
 		{
-			$builder = $this->getContainerBuilder();
 			$usesMapping = FALSE;
 
 			foreach ($this->compiler->getExtensions() as $extension) {
@@ -258,11 +315,7 @@
 		}
 
 
-		/**
-		 * @param  array<string, mixed> $config
-		 * @return ServiceDefinition
-		 */
-		protected function configureStiMapper(ServiceDefinition $mainMapper, array $config)
+		protected function configureStiMapper(ServiceDefinition $mainMapper): ServiceDefinition
 		{
 			$builder = $this->getContainerBuilder();
 			$stiMapper = $builder->addDefinition($this->prefix('stiMapper'));
@@ -336,11 +389,7 @@
 		}
 
 
-		/**
-		 * @param  array<string, mixed> $config
-		 * @return ServiceDefinition
-		 */
-		protected function configureRowMapper(ServiceDefinition $mainMapper, array $config)
+		protected function configureRowMapper(ServiceDefinition $mainMapper): ServiceDefinition
 		{
 			$builder = $this->getContainerBuilder();
 			$rowMapper = $builder->addDefinition($this->prefix('rowMapper'));
@@ -449,9 +498,8 @@
 		 * Registers new entity in mapper
 		 * @param  array $mapping  [table => '', primaryKey => '', entity => '', repository => '']
 		 * @phpstan-param array<string, mixed> $mapping
-		 * @return bool
 		 */
-		protected function registerInMapper(ServiceDefinition $mapper, array $mapping = NULL)
+		protected function registerInMapper(ServiceDefinition $mapper, array $mapping = NULL): bool
 		{
 			if ($mapping === NULL) {
 				return FALSE;
@@ -485,9 +533,13 @@
 		 * @param  string $name
 		 * @return void
 		 */
-		public static function register(Nette\Configurator $configurator, $name = 'leanmapper')
+		public static function register(\Nette\Bootstrap\Configurator $configurator, $name = 'leanmapper')
 		{
-			$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) use ($name) {
+			if (!is_array($configurator->onCompile)) {
+				throw new \RuntimeException("Configurator::onCompile must be array, iterable " . gettype($configurator->onCompile) . ' given.');
+			}
+
+			$configurator->onCompile[] = function (\Nette\Bootstrap\Configurator $configurator, Nette\DI\Compiler $compiler) use ($name) {
 				$compiler->addExtension($name, new LeanMapperExtension());
 			};
 		}

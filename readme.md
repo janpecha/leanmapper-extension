@@ -22,7 +22,7 @@ composer require janpecha/leanmapper-extension
 
 Extension requires:
 * PHP 7.2 or later
-* Nette 2.4 or later
+* Nette 3.0 or later
 * LeanMapper 4.0 or later
 
 
