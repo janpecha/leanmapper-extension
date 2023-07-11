@@ -130,10 +130,9 @@ class FooExtension extends CompilerExtension implements IStiMappingProvider
 	function getStiMappings()
 	{
 		return [
-			[
-				'baseEntity' => Model\Entity\Client::class,
-				'type' => 'company',
-				'entity' => Model\Entity\ClientCompany::class,
+			Model\Entity\Client::class => [ // base entity
+				// type => target entity
+				'company' => Model\Entity\ClientCompany::class,
 			],
 			// ...
 		];

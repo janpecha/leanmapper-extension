@@ -17,11 +17,16 @@ namespace Foo\DI
 		function getStiMappings()
 		{
 			return [
+				// old syntax
 				[
 					'baseEntity' => \Model\Entity\Client::class,
 					'type' => 'company',
 					'entity' => \Model\Entity\ClientCompany::class,
 				],
+				// new syntax
+				\Model\Entity\Client::class => [
+					'individual' => \Model\Entity\ClientIndividual::class,
+				]
 				// ...
 			];
 		}
@@ -56,5 +61,22 @@ namespace
 
 		Assert::same('client', $mapper->getTable(Model\Entity\Client::class));
 		Assert::same('client', $mapper->getTable(Model\Entity\ClientCompany::class));
+	});
+
+
+	test(function () {
+		$container = createContainer('sti');
+
+		$mapper = $container->getByType(LeanMapper\IMapper::class);
+		Assert::true($mapper instanceof Inlm\Mappers\StiMapper);
+
+		Assert::same(Model\Entity\Client::class, $mapper->getEntityClass('client'));
+
+		$row = LeanMapper\Result::createDetachedInstance()->getRow();
+		$row->clientType = 'individual';
+		Assert::same(Model\Entity\ClientIndividual::class, $mapper->getEntityClass('client', $row));
+
+		Assert::same('client', $mapper->getTable(Model\Entity\Client::class));
+		Assert::same('client', $mapper->getTable(Model\Entity\ClientIndividual::class));
 	});
 }

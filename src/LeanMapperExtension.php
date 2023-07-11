@@ -274,21 +274,36 @@
 				$mappings = $extension->getStiMappings();
 				Assert::true(is_array($mappings), 'STI mappings from extension must be array.');
 
-				foreach ($mappings as $mapping) {
+				foreach ($mappings as $entityName => $mapping) {
 					Assert::true(is_array($mapping), 'STI mapping must be array.');
-					Assert::true(isset($mapping['baseEntity']), "STI mapping - missing key 'baseEntity'");
-					Assert::true(isset($mapping['type']), "STI mapping - missing key 'type'");
-					Assert::true(isset($mapping['entity']), "STI mapping - missing key 'entity'");
 
-					Assert::string($mapping['baseEntity'], "STI mapping - key 'baseEntity' must be string");
-					Assert::true(is_string($mapping['type']) || is_int($mapping['type']), "STI mapping - key 'type' must be string|int");
-					Assert::string($mapping['entity'], "STI mapping - key 'entity' must be string");
+					if (is_string($entityName)) { // new syntax
+						foreach ($mapping as $type => $targetEntity) {
+							Assert::string($targetEntity, "STI mapping - target entity name must be string");
 
-					$stiMapper->addSetup('registerStiType', [
-						$mapping['baseEntity'],
-						$mapping['type'],
-						$mapping['entity'],
-					]);
+							$stiMapper->addSetup('registerStiType', [
+								$entityName,
+								$type,
+								$targetEntity,
+							]);
+						}
+
+					} else {
+						Assert::true(isset($mapping['baseEntity']), "STI mapping - missing key 'baseEntity'");
+						Assert::true(isset($mapping['type']), "STI mapping - missing key 'type'");
+						Assert::true(isset($mapping['entity']), "STI mapping - missing key 'entity'");
+
+						Assert::string($mapping['baseEntity'], "STI mapping - key 'baseEntity' must be string");
+						Assert::true(is_string($mapping['type']) || is_int($mapping['type']), "STI mapping - key 'type' must be string|int");
+						Assert::string($mapping['entity'], "STI mapping - key 'entity' must be string");
+
+						$stiMapper->addSetup('registerStiType', [
+							$mapping['baseEntity'],
+							$mapping['type'],
+							$mapping['entity'],
+						]);
+					}
+
 					$usesMapping = TRUE;
 				}
 
