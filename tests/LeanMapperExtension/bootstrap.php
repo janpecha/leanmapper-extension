@@ -11,8 +11,10 @@ define('TEMP_DIR', __DIR__ . '/../tmp/' . (isset($_SERVER['argv']) ? md5(seriali
 Tester\Helpers::purge(TEMP_DIR);
 
 
-// helpers
-function test($fnc)
+/**
+ * @return void
+ */
+function test(callable $fnc)
 {
 	$fnc();
 }
@@ -20,7 +22,7 @@ function test($fnc)
 
 /**
  * @param string $configFile
- * @return \SystemContainer|Nette\DI\Container
+ * @return Nette\DI\Container
  */
 function createContainer($configFile)
 {
