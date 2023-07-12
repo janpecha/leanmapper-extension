@@ -533,13 +533,16 @@
 		 * @param  string $name
 		 * @return void
 		 */
-		public static function register(\Nette\Bootstrap\Configurator $configurator, $name = 'leanmapper')
+		public static function register(\Nette\Configurator $configurator, $name = 'leanmapper')
 		{
-			if (!is_array($configurator->onCompile)) {
+			if ($configurator->onCompile === NULL) { // @phpstan-ignore-line
+				$configurator->onCompile = [];
+
+			} elseif (!is_array($configurator->onCompile)) {
 				throw new \RuntimeException("Configurator::onCompile must be array, iterable " . gettype($configurator->onCompile) . ' given.');
 			}
 
-			$configurator->onCompile[] = function (\Nette\Bootstrap\Configurator $configurator, Nette\DI\Compiler $compiler) use ($name) {
+			$configurator->onCompile[] = function (\Nette\Configurator $configurator, Nette\DI\Compiler $compiler) use ($name) {
 				$compiler->addExtension($name, new LeanMapperExtension());
 			};
 		}
